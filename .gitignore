@@ -1,0 +1,35 @@
+#Virtual Environment
+venv/
+env/
+
+#Python cache
+__pycache__/
+*$py.class
+*.so
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data files (don't commit raw data)
+data/raw/signals.jsonl
+data/raw/*.jsonl
+data/processed/
+
+# Models
+models/*.pkl
+models/*.joblib
+
+# Environment variables
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
