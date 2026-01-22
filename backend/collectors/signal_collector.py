@@ -19,6 +19,10 @@ import json
 import os
 from datetime import datetime
 from utils.helpers import getSignalsFile, formatTimestamp
+from pathlib import Path
+
+baseDirectory = Path(__file__).parent #backend/
+signalsFile = baseDirectory / "data" / "raw" / "signals.jsonl"
 
 class SignalCollector:
 
@@ -29,14 +33,15 @@ class SignalCollector:
     """
     def __init__(self):
         """Initializes the signal collector"""
-        self.signalsFile = getSignalsFile()
+        self.signalsFile = str(signalsFile)
         self.ensureFileExists()
 
     def ensureFileExists(self):
         """Create signals.json1 file if it doesn't exist"""
-        if not os.path.exists(self.signalsFile):
-            #creates empty file
-            open(self.signalsFile, 'a').close()
+        path = Path(self.signalsFile)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if not path.exists():
+            path.open('a').close()
 
     def saveSignalBatch(self, batchData):
         """Saves a batch of signals to the file """

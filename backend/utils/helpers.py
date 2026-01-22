@@ -45,5 +45,15 @@ def isValidSignalBatch(data):
 
     "Validate that incoming signal batch has required fields"
     requiredFields = ['sessionID', 'signals', 'metadata']
-    return all(field in data for field in requiredFields)
+    if not all(field in data for field in requiredFields):
+        return False
+    
+    signals = data.get("signals", {})
+
+    #Each signals sub-field should be a list
+    for key in ["mouseMoves", "clicks", "keys"]:
+        if key in signals and not isinstance(signals[key], list):
+            return False
+    
+    return True
     

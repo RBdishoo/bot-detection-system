@@ -24,7 +24,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from collectors.signal_collector import SignalCollector
 from utils.helpers import (
     genSeshID,
-    getSignalsFile,
     isValidSignalBatch,
     formatTimestamp
 )
@@ -47,14 +46,18 @@ def getStats():
     try:
         totalBatches = collector.getBatchCount()
         uniqueSessions = collector.getSessionCount()
-        fileSizeKb = os.path.getsize(getSignalsFile()) / 1024
+        signalsFile = collector.signalsFile
+        fileSizeKb = 0
+        if os.path.exists(signalsFile):
+            fileSizeKb = os.path.getsize(signalsFile) / 1024
 
         return jsonify({
             "Total Batches": totalBatches,
             "Unique Sessions": uniqueSessions,
             "Signals File Size (in Kb)": round(fileSizeKb, 1),
+            "Signals File": signalsFile,
             "Server Timestamp": formatTimestamp()
-        })
+        }), 200
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -69,12 +72,20 @@ def saveSignals():
         #Get JSON data from request
         data = request.get_json()
 
+        print("DEBUG incoming batch:", data, flush=True)
+
         if not data:
-            return jsonify({"Error": "No JSON data received"}), 400
-        
+             return jsonify({"Error": "No JSON data received"}), 400
+
         #Validate structure
         if not isValidSignalBatch(data):
-            return jsonify({"Error": "Invalid signal batch format"}), 400
+            return jsonify({
+                "Error": "Invalid signal batch format",
+                "received__keys": list(data.keys()),
+                "signals_type": str(type(data.get("signals"))),
+                }), 400
+        
+
         
         #Save to file
         success = collector.saveSignalBatch(data)
