@@ -46,7 +46,7 @@ def getStats():
     try:
         totalBatches = collector.getBatchCount()
         uniqueSessions = collector.getSessionCount()
-        signalsFile = collector.signalsFile
+        signalsFile = collector.getSignalsFile()
         fileSizeKb = 0
         if os.path.exists(signalsFile):
             fileSizeKb = os.path.getsize(signalsFile) / 1024

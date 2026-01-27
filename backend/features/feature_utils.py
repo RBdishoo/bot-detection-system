@@ -108,15 +108,15 @@ class MouseTrajectoryUtils:
 
         #Create vectors from pointTwo to pointOne, and pointTwo to pointThree
         vectorOne = (pointOne[0] - pointTwo[0], pointOne[1] - pointTwo[1])     #Vector pointTwo -> pointOne 
-        VectorTwo = (pointThree[0] - pointTwo[0], pointThree[1], pointTwo[1])   #Vector pointTwo -> pointThree
+        vectorTwo = (pointThree[0] - pointTwo[0], pointThree[1] - pointTwo[1])   #Vector pointTwo -> pointThree
 
         #Dot Product for angle magnitude
 
-        dot = vectorOne[0] * VectorTwo[0] + vectorOne[1] * VectorTwo[1]
+        dot = vectorOne[0] * vectorTwo[0] + vectorOne[1] * vectorTwo[1]
 
         #Determinant for angle sign
 
-        det = vectorOne[0] * VectorTwo[1] - vectorOne[1] * VectorTwo[0]
+        det = vectorOne[0] * vectorTwo[1] - vectorOne[1] * vectorTwo[0]
 
         #aTan2 gives signed angle, abs() gives range [0, pi]
 

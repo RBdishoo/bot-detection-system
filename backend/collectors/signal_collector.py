@@ -21,7 +21,7 @@ from datetime import datetime
 from utils.helpers import getSignalsFile, formatTimestamp
 from pathlib import Path
 
-baseDirectory = Path(__file__).parent #backend/
+baseDirectory = Path(__file__).parent.parent #backend/
 signalsFile = baseDirectory / "data" / "raw" / "signals.jsonl"
 
 class SignalCollector:
@@ -31,6 +31,11 @@ class SignalCollector:
     It's thread-safe for concurrent writes from multiple users
 
     """
+
+    def getSignalsFile(self):
+        return self.signalsFile
+    
+    
     def __init__(self):
         """Initializes the signal collector"""
         self.signalsFile = str(signalsFile)
