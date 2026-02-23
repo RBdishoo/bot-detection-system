@@ -5,8 +5,12 @@ function logResponse(obj){
     box.textContent = JSON.stringify(obj, null, 2);
 }
 
-// Session ID hard coded for now
-const sessionID = "frontendTestSession";
+// Generate or reuse a sessionID for this browser session
+let sessionID = localStorage.getItem("bd_session_id");
+if (!sessionID){
+    sessionID = "sess-" + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem("bd_session_id", sessionID)
+}
 
 //In-memory buffers
 const signalsBuffer = {

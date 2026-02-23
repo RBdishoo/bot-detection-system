@@ -144,21 +144,22 @@ class MouseTrajectoryUtils:
         """
 
         #Edge Case: need at least 2 points to have a movement
-
-        if len(moves) < 2:
+        cleanMoves = [m for m in moves if "ts" in m]
+        if len(cleanMoves) < 2:
             return [], []
         
         #Extract (x, y) coordinates from each move
-        coords = [(m['x'], m['y']) for m in moves]
+        coords = [(m['x'], m['y']) for m in cleanMoves]
 
         #Extract timestamps in milliseconds
 
-        timestamps = [m['ts'] for m in moves]
+        timestamps = [m['ts'] for m in cleanMoves]
 
         #Calculate time between consecutive events
         # for example: events at [1000ms, 1100ms, 1300ms]
         #Deltas are [100ms, 200ms]
 
+        
         timeDeltas = [timestamps[i+1] - timestamps[i] for i in range(len(timestamps)-1)]
 
         return coords, timeDeltas

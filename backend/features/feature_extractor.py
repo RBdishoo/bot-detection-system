@@ -97,6 +97,20 @@ class FeatureExtractor:
         #Convert moves into coordinates and time deltas
         coords, timeDeltas = self.utilsMouse.extractCoordinatesAndTimes(moves)
 
+        #If filtering removed too many points, bail out with zeros
+        if len(coords) < 2 or not timeDeltas:
+            features['mouseMoveCount'] = float(len(moves))
+            features['mouseAvgVelocity'] = 0.0
+            features['mouseStdVelocity'] = 0.0
+            features['mouseMaxVelocity'] = 0.0
+            features['mousePauseCount'] = 0.0
+            features['mouseAvgPauseDurationMs'] = 0.0
+            features['mousePathEfficiency'] = 0.0
+            features['mouseAngularVelocityStd'] = 0.0
+            features['mouseHoverTimeRatio'] = 0.0
+            features['mouseHoverFrequency'] = 0.0
+            return features
+
         #Calculate distances and velocities between consecutive points
         distances = [
             self.utilsMouse.distance(coords[i], coords[i+1]) for i in range(len(coords)-1)
@@ -147,6 +161,10 @@ class FeatureExtractor:
         Returns - pauseCount, totalPauseDurationMs
 
         """
+
+        #Edge case: no movement or no timing information
+        if len(coords) < 2 or not timeDeltas:
+            return 0,0
 
         distances = [
             self.utilsMouse.distance(coords[i], coords[i+1]) for i in range(len(coords)-1)
@@ -308,9 +326,9 @@ class FeatureExtractor:
        features: Dict[str, float] = {}
        
        allTimestamps: List[float] = []
-       allTimestamps.extend([m['ts'] for m in moves])
-       allTimestamps.extend([c['ts'] for c in clicks])
-       allTimestamps.extend([k['ts'] for k in keys])
+       allTimestamps.extend([m['ts'] for m in moves if "ts" in m])
+       allTimestamps.extend([c['ts'] for c in clicks if "ts" in c])
+       allTimestamps.extend([k['ts'] for k in keys if "ts" in k])
 
        if len(allTimestamps) >=2:
            batchDurationMs = max(allTimestamps) - min(allTimestamps)

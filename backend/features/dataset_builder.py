@@ -47,7 +47,11 @@ class DatasetBuilder:
             }
 
             feats = self.extractor.extractBatchFeatures(batchData)
-            feats["sessionID"] = row["sessionID"]
+            sessionCol = "sessionID"
+            if sessionCol not in row.index and "index" in row.index:
+                sessionCol = "index"
+
+            feats["sessionID"] = row.get("sessionID", row.name)
             feats["timestamp"] = row["timestamp"]
             feats["timestampRelativeMs"] = row["timestampRelativeMs"]
 

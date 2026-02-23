@@ -65,9 +65,14 @@ class SignalDataLoader:
             logger.warning("No valid signals Loaded")
             return df
         
+        #Debug: inspect columns and a few rows
+        print("Columns:", list(df.columns))
+        print(df.head())
+        
         #Normalize timestamps to relative (session start = 0)
         df = self.normalizeTimestamps(df)
-        logger.info(f"Unique sessions: {df['sessionID'].nunique()}")
+        print("After normalize Columns:", list(df.columns))
+        logger.info(f"sessionID col after normalize: { 'sessionID' in df.columns }")
 
         return df
     
@@ -92,6 +97,13 @@ class SignalDataLoader:
 
         for each sessionID, sets earliest timestamp to 0.
         """
+        #Debug
+        print("Normalize in Columns:", list(df.columns))
+
+        #SessionID is in a normal column
+        if "sessionID" not in df.columns and "sessionID" in df.index.names:
+            df = df.reset_index()
+
         def normalizeGroup(group: pd.DataFrame) -> pd.DataFrame:
             group["timestamp"] = pd.to_datetime(group["timestamp"])
             sessionStart = group["timestamp"].min()
@@ -101,7 +113,11 @@ class SignalDataLoader:
             group["timestampRelativeMs"] = group["timestampRelativeMs"].astype(int)
             return group
     
+        #groupby without changing the index to sessionID
         df = df.groupby("sessionID", group_keys=False).apply(normalizeGroup)
+        
+
+        print("Normalize Out columns:", list(df.columns))
         return df
     
     def getSessionData(self, sessionId: str) -> pd.DataFrame:
